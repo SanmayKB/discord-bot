@@ -13,4 +13,10 @@ client.on('ready', (c) =>{
     console.log(`${c.user.tag} is online`);
 });
 
+client.on('messageCreate', (message)=>{
+    if(message.content === 'Hey Kettle'){
+        message.reply('Hey!');
+    }
+});
+
 client.login('MTMxNDc4OTMyNzIxNzEwMjg5OQ.GELu60.VXOWRtewBENpjIS3_BjrpV62-03-Fbcfp_NqL8');
