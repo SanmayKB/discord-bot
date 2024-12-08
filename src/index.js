@@ -26,7 +26,18 @@ client.on('messageCreate', (message)=>{
 client.on('interactionCreate', (interaction) =>{
     if(!interaction.isChatInputCommand()) return;
 
-    console.log(interaction);
+    if(interaction.commandName === 'add'){
+        const num1 = interaction.options.get('first-number').value;
+        const num2 = interaction.options.get('second-number').value;
+        
+        interaction.reply(`Sum: ${num1 + num2}`);
+    }
+
+    if(interaction.commandName === 'multiply'){
+        const num1 = interaction.options.get('first-number').value;
+        const num2 = interaction.options.get('second-number').value;
+        interaction.reply(`product: ${num1 * num2}`);
+    }
 });
 
 client.login(process.env.TOKEN);
