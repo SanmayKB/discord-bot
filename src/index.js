@@ -23,4 +23,10 @@ client.on('messageCreate', (message)=>{
     }
 });
 
+client.on('interactionCreate', (interaction) =>{
+    if(!interaction.isChatInputCommand()) return;
+
+    console.log(interaction);
+});
+
 client.login(process.env.TOKEN);
