@@ -1,5 +1,5 @@
 require('dotenv').config();
-const {Client, IntentsBitField, EmbedBuilder, Embed} = require('discord.js');
+const {Client, IntentsBitField, EmbedBuilder, Embed, ActivityType} = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -10,8 +10,40 @@ const client = new Client({
     ],
 });
 
+
+const status =[
+    {
+        name: 'History of Monster Hunter',
+        type: ActivityType.Streaming,
+        url: 'https://www.youtube.com/watch?v=xzEKeMi-edg&t=0s',
+    },
+    {
+        name: 'History of Monster Hunter weapons',
+        type: ActivityType.Streaming,
+        url: 'https://www.youtube.com/watch?v=WWsXhBlMxt8&list=PLhW2dgyg2f59_OnIq9DS7WPd3kClJnb3Y&index=26',
+    },
+    {
+        name: 'The sunset',
+        type: ActivityType.Watching,
+        
+    },
+    {
+        name: 'Monster Hunter',
+        type: ActivityType.Playing,
+        
+    },
+    
+]
+
 client.on('ready', (c) =>{
     console.log(`${c.user.tag} is online`);
+
+    setInterval(()=>{
+        let random = Math.floor(Math.random()*status.length);
+        client.user.setActivity(status[random]);
+    },10000);
+    
+
 });
 
 client.on('messageCreate', (message)=>{
