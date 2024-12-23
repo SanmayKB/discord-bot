@@ -34,7 +34,7 @@ client.on('ready', async(c) =>{
                 new ButtonBuilder()
                 .setCustomId(role.id)
                 .setLabel(role.label)
-                .setStyle(ButtonStyle.Secondary)
+                .setStyle(ButtonStyle.Primary)
             );
         });
 
