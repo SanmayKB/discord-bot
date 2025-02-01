@@ -1,5 +1,7 @@
 require('dotenv').config();
-const {Client, IntentsBitField, EmbedBuilder, Embed, ActivityType} = require('discord.js');
+const {Client, IntentsBitField} = require('discord.js');
+const mongoose = require('mongoose');
+const eventHandler = require('./handlers/eventHandler');
 
 const client = new Client({
     intents: [
@@ -10,131 +12,19 @@ const client = new Client({
     ],
 });
 
-
-const status =[
-    {
-        name: 'History of Monster Hunter',
-        type: ActivityType.Streaming,
-        url: 'https://www.youtube.com/watch?v=xzEKeMi-edg&t=0s',
-    },
-    {
-        name: 'History of Monster Hunter weapons',
-        type: ActivityType.Streaming,
-        url: 'https://www.youtube.com/watch?v=WWsXhBlMxt8&list=PLhW2dgyg2f59_OnIq9DS7WPd3kClJnb3Y&index=26',
-    },
-    {
-        name: 'The sunset',
-        type: ActivityType.Watching,
-        
-    },
-    {
-        name: 'Monster Hunter',
-        type: ActivityType.Playing,
-        
-    },
-    
-]
-
-client.on('ready', (c) =>{
-    console.log(`${c.user.tag} is online`);
-
-    setInterval(()=>{
-        let random = Math.floor(Math.random()*status.length);
-        client.user.setActivity(status[random]);
-    },10000);
-    
-
-});
-
-client.on('messageCreate', (message)=>{
-    if(message.author.bot){
-        return;
-    }
-    if(message.content === 'Hey Kettle'){
-        message.reply('Hey!');
-    }
-});
-
-// client.on('interactionCreate', (interaction) =>{
-    
-// });
-
-client.on('interactionCreate', async(interaction) =>{
+(async ()=>{  
     try {
-            if(interaction.isButton()){
-            const role = interaction.guild.roles.cache.get(interaction.customId);
+        mongoose.set('strictQuery', false);
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("Connected to DB");
 
-            await interaction.deferReply({ephemeral: true});
-
-            if(!role){
-                interaction.editReply(
-                    {
-                        content: "I couldn't find that role",
-                        
-                    }
-                )
-                return;
-            }
-            const hasRole = interaction.member.roles.cache.has(role.id);
-
-            if(hasRole){
-                await interaction.member.roles.remove(role);
-                await interaction.editReply(`The role ${role} has been removed`);
-                return;
-            }
-            await interaction.member.roles.add(role);
-            await interaction.editReply(`The role ${role} has been added`);
-        }
-        
-        if(interaction.isChatInputCommand){
-            if(interaction.commandName === 'add'){
-            const num1 = interaction.options.get('first-number').value;
-            const num2 = interaction.options.get('second-number').value;
-            
-            interaction.reply(`Sum: ${num1 + num2}`);
-        }
-
-        if(interaction.commandName === 'multiply'){
-            const num1 = interaction.options.get('first-number').value;
-            const num2 = interaction.options.get('second-number').value;
-            interaction.reply(`product: ${num1 * num2}`);
-        }
-        if(interaction.commandName === 'embed'){
-            const embed = new EmbedBuilder()
-            .setTitle('This is the embed title')
-            .setDescription('This is the description')
-            .setColor(0x121212)
-            .setAuthor({name:'Link', iconURL:'https://lh3.googleusercontent.com/5G-1E-QhiwLFrlJvl68PtEjOzfIUrP8kalXOP8YrNoLHE4T4pP4ovzi2iOjmu_z5_-TqklO0Dmy1qNXkuWNrGvTO=s1280-w1280-h800', url: 'https://youtu.be/u5_a-lQlv6A?list=PLpmb-7WxPhe0ZVpH9pxT5MtC4heqej8Es'})
-            .setThumbnail('https://lh3.googleusercontent.com/5G-1E-QhiwLFrlJvl68PtEjOzfIUrP8kalXOP8YrNoLHE4T4pP4ovzi2iOjmu_z5_-TqklO0Dmy1qNXkuWNrGvTO=s1280-w1280-h800')
-            .addFields({
-                name: 'Link\'s Field 1', 
-                value: 'Hello there', 
-                inline: true
-            },
-            {
-                name: 'Link\'s Field 2',
-                value: 'Good day we are having',
-                inline: true
-            },
-            {
-                name: '3rd field',
-                value: '234',
-
-            },
-            {
-                name: '4th field', 
-                value: '5435', 
-            }
-        
-            );
-
-            interaction.reply({embeds: [embed]});
-        }
-        }
+        eventHandler(client);
     } catch (error) {
-        console.log(error);
+        console.log(`There was an error while trying to run the bot: ${error}`);
     }
-    
-});
+})();
+
+
+
 
 client.login(process.env.TOKEN);
