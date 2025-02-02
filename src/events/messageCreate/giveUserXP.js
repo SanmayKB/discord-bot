@@ -1,6 +1,8 @@
 const {Client, Message} = require('discord.js');
 const calculateLevelXP = require('../../utils/calculateLevelXP.js');
-const Level = require('../../models/Level.js')
+const Level = require('../../models/Level.js');
+const cooldowns = new Set();
+
 
 function getRandomXP(min, max){
     min = Math.ceil(min);
@@ -17,7 +19,7 @@ function getRandomXP(min, max){
  */
 
  module.exports = async (client, message) =>{
-    if(!message.inGuild()||message.author.bot) return;
+    if(!message.inGuild()||message.author.bot || cooldowns.has(message.author.id)) return;
 
     const xpToGive = getRandomXP(5,15);
     const query ={
@@ -38,6 +40,11 @@ function getRandomXP(min, max){
                 console.log(`error while saving level: ${e}`);
                 return;
             });
+
+            cooldowns.add(message.author.id);
+            setTimeout(()=>{
+                cooldowns.delete(message.author.id)
+            }, 60000);
         }
         //if(!level)
         else{
@@ -51,7 +58,11 @@ function getRandomXP(min, max){
 
             await newLevel.save().catch((e) =>{
                 console.log(`Error while saving new level: ${e}`);
-            })
+            });
+            cooldowns.add(message.author.id);
+            setTimeout(()=>{
+                cooldowns.delete(message.author.id)
+            }, 60000);
         }
 
     } catch (error) {

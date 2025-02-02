@@ -7,6 +7,7 @@ const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildPresences,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
     ],
@@ -19,6 +20,8 @@ const client = new Client({
         console.log("Connected to DB");
 
         eventHandler(client);
+
+        client.login(process.env.TOKEN);
     } catch (error) {
         console.log(`There was an error while trying to run the bot: ${error}`);
     }
@@ -27,4 +30,3 @@ const client = new Client({
 
 
 
-client.login(process.env.TOKEN);
