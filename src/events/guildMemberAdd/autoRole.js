@@ -1,5 +1,5 @@
 const {Client, GuildMember} = require('discord.js');
-const AutoRole = require('../../../models/AutoRole');
+const AutoRole = require('../../models/AutoRole');
 
 /**
  * 

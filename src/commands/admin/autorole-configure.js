@@ -8,7 +8,7 @@ module.exports = {
      * @param {Interaction} interaction 
      */
     callback: async (client, interaction)=>{
-        if(!interaction.inGuild){
+        if(!interaction.inGuild()){
             interaction.reply("You can only run this command in a server.");
             return;
         }
@@ -51,5 +51,5 @@ module.exports = {
         }
     ],
     permissionsRequired: [PermissionFlagsBits.Administrator],
-    botPermissions: [PermissionFlagsBits.Administrator],
+    botPermissions: [PermissionFlagsBits.ManageRoles],
 }
