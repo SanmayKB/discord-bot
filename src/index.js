@@ -1,15 +1,19 @@
 require('dotenv').config();
-const {Client, IntentsBitField, EmbedBuilder, Embed} = require('discord.js');
+const {Client, IntentsBitField} = require('discord.js');
+const mongoose = require('mongoose');
+const eventHandler = require('./handlers/eventHandler');
 
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildPresences,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
     ],
 });
 
+<<<<<<< HEAD
 client.on('ready', (c) =>{
     console.log(`${c.user.tag} is online`);
 });
@@ -70,5 +74,22 @@ client.on('interactionCreate', (interaction) =>{
         interaction.reply({embeds: [embed]});
     }
 });
+=======
+(async ()=>{  
+    try {
+        mongoose.set('strictQuery', false);
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("Connected to DB");
 
-client.login(process.env.TOKEN);
+        eventHandler(client);
+
+        client.login(process.env.TOKEN);
+    } catch (error) {
+        console.log(`There was an error while trying to run the bot: ${error}`);
+    }
+})();
+
+
+
+>>>>>>> cointoss
+
