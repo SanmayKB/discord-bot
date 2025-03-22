@@ -13,7 +13,7 @@ module.exports = {
      * @param {Interaction} interaction 
      */
     callback: async (client, interaction) =>{
-        if(!interaction.inGuild){
+        if(!interaction.inGuild()){
             interaction.reply("You can only run this command inside a server");
             return;
         }
@@ -68,6 +68,8 @@ module.exports = {
         const image = await rank.build({ format: 'png',});
         const attachment = new AttachmentBuilder(image);
         interaction.editReply({ files: [attachment] });
+
+        
         
     },
 
