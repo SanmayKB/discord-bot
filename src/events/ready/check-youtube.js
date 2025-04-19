@@ -17,10 +17,11 @@ module.exports = (client) => {
         try {
             const notificationConfigs = await NotificationConfig.find();
             console.log("Checking for YouTube uploads...");
+            
 
-            for (const notificationConfig of notificationConfigs) {  // ✅ Fixed loop
+            for (const notificationConfig of notificationConfigs) {  
 
-                const feed = await youtube.search.list({
+                const feed =await youtube.search.list({
                     part: 'snippet',
                     channelId: notificationConfig.ytChannelId,
                     order: 'date',
@@ -28,11 +29,17 @@ module.exports = (client) => {
                     type: 'video',
                 });
 
+                //console.log(feed);
+
                 if (!feed.data.items || feed.data.items.length === 0) continue;  
 
                 const latestVideo = feed.data.items[0];
                 const latestCheckedVideo = notificationConfig.lastCheckedVid;
 
+                //logging for debugging purpses
+                console.log(latestVideo);
+                console.log(latestCheckedVideo);
+                //comment it out later
                 
                 if (
                     !latestVideo ||
@@ -61,7 +68,8 @@ module.exports = (client) => {
                     continue;
                 }
 
-                
+
+
                 notificationConfig.lastCheckedVid = {
                     id: latestVideo.id.videoId,
                     pubDate: latestVideo.snippet.publishedAt,
@@ -75,8 +83,8 @@ module.exports = (client) => {
                     notificationConfig.customMessage
                         ?.replace('{VIDEO_URL}', videoUrl)
                         ?.replace('{VIDEO_TITLE}', latestVideo.snippet.title)
-                        ?.replace('{CHANNEL_URL}', `https://www.youtube.com/channel/${notificationConfig.ytChannelId}`)
-                        ?.replace('{CHANNEL_NAME}', latestVideo.snippet.channelTitle) // ✅ Fixed `channelTitle`
+                        ?.replace('{CHANNEL_URL}', `https://www.youtube.com/channel/${latestVideo.snippet.channelId}`)
+                        ?.replace('{CHANNEL_NAME}', latestVideo.snippet.channelTitle) 
                     || `New upload by **${latestVideo.snippet.channelTitle}**\n${videoUrl}`;
 
                 targetChannel.send(targetMessage);
